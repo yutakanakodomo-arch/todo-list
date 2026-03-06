@@ -28,7 +28,7 @@
       padding-bottom:48px;
     }
 
-
+```
 /* ========== HEADER ========== */
 .header {
   background:#3D7A78;
@@ -598,11 +598,22 @@ function renderShopList() {
 
   let html = `<div class="list-divider">🛒 未購入 (${allItems.length}件)</div>`;
   html += `<div class="store-section"><div class="item-list">`;
-  groupByStore(allItems).forEach(({ store, items }) => {
+
+  // タスクアイテムは店名なしで表示
+  const taskItems = allItems.filter(i => i.storeId === 'task-store');
+  const storeItems = allItems.filter(i => i.storeId !== 'task-store');
+
+  if (taskItems.length) {
+    html += `<div style="padding:6px 0 2px; font-size:11px; font-weight:900; color:var(--teal); border-bottom:1px solid #F0F0F0; margin-bottom:2px;">📝 タスク</div>`;
+    taskItems.forEach(item => { html += itemHTML(item, true); });
+  }
+
+  groupByStore(storeItems).forEach(({ store, items }) => {
     const em = STORE_EMOJIS[data.stores.indexOf(store) % STORE_EMOJIS.length];
     html += `<div style="padding:6px 0 2px; font-size:11px; font-weight:900; color:var(--teal); border-bottom:1px solid #F0F0F0; margin-bottom:2px;">${em} ${esc(store.name)}</div>`;
     items.forEach(item => { html += itemHTML(item, true); });
   });
+
   html += `</div></div>`;
 
   document.getElementById('mainContent').innerHTML = html;
